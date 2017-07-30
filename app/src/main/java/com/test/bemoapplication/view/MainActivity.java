@@ -1,5 +1,6 @@
 package com.test.bemoapplication.view;
 
+import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -33,6 +34,13 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView.LayoutManager mLayoutManager;
     int page = 1;
     RecyclerViewPositionHelper mRecyclerViewHelper;
+    Gson mGson = new GsonBuilder().create();
+    List<MovieResult> arrayListMovieList = new ArrayList<MovieResult>();
+    int totalPageCount = 1;
+    int currentPage = 1;
+    MovieListAdapter mAdapter;
+    boolean isLoading = false;
+    ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,30 +52,36 @@ public class MainActivity extends AppCompatActivity {
     private void setUI(){
         recyclerViewMoviesList = ( RecyclerView) findViewById(R.id.recycler_movies_list);
 
+
+        mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerViewMoviesList.setLayoutManager(mLayoutManager);
+        recyclerViewMoviesList.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerViewHelper = RecyclerViewPositionHelper.createHelper(recyclerViewMoviesList);
+
         recyclerViewMoviesList.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                /*if(dy > 0) //check for scroll down
+                if(dy > 0) //check for scroll down
                 {
                     visibleItemCount = mLayoutManager.getChildCount();
-                    totalItemCount = arrayListTransactionList.size()-1;
+                    totalItemCount = arrayListMovieList.size()-1;
                     lastVisiblesItems = mRecyclerViewHelper.findLastVisibleItemPosition();
                     System.out.println("last "+lastVisiblesItems + "total "+totalItemCount);
-                    if (hasMore)
+                    if (currentPage<totalPageCount)
                     {
 
                         if(lastVisiblesItems==(totalItemCount)) {
                             if (isLoading == false) {
                                 isLoading = true;
-                                getTransactionData(arrayListTransactionList.get(arrayListTransactionList.size() - 1).getId());
+                                currentPage = currentPage + 1;
+                                getMovieList();
                             }
                         }
                     }
-                }*/
-
+                }
             }
         });
 
@@ -75,33 +89,54 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getMovieList(){
-        APIHandler.getsharedInstance(MainActivity.this).execute(Request.Method.GET, "https://api.themoviedb.org/3/movie/now_playing?api_key=6906bb8eb453d3271e9304c440f9c1f8&language=en-US&page="+page, null, new Response.Listener<JSONObject>() {
+        isLoading = true;
+        progressDialog = new ProgressDialog(MainActivity.this);
+        progressDialog.setMessage("Please wait...");
+        progressDialog.setCancelable(false);
+        if(!progressDialog.isShowing()) {
+            progressDialog.show();
+        }
+
+        APIHandler.getsharedInstance(MainActivity.this).execute(Request.Method.GET, APIHandler.restAPI.moviesList+currentPage, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
 
                 try {
-                    Gson mGson = new GsonBuilder().create();
+
                     JSONArray jsonArray = response.getJSONArray("results");
-                    List<MovieResult> arrayListMovieList = new ArrayList<MovieResult>();
+                    totalPageCount = response.getInt("total_pages");
                     for(int i = 0 ; i <jsonArray.length() ; i ++){
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
                         MovieResult bean = mGson.fromJson(jsonObject.toString(), MovieResult.class);
                         arrayListMovieList.add(bean);
                     }
-                    mLayoutManager = new LinearLayoutManager(getApplicationContext());
-                    recyclerViewMoviesList.setLayoutManager(mLayoutManager);
-                    recyclerViewMoviesList.setItemAnimator(new DefaultItemAnimator());
-                    mRecyclerViewHelper = RecyclerViewPositionHelper.createHelper(recyclerViewMoviesList);
-                    MovieListAdapter mAdapter = new MovieListAdapter(MainActivity.this, arrayListMovieList);
-                    recyclerViewMoviesList.setAdapter(mAdapter);
+
+                    if(mAdapter == null)
+                    {
+                        mAdapter = new MovieListAdapter(MainActivity.this, arrayListMovieList);
+                        recyclerViewMoviesList.setAdapter(mAdapter);
+                    }else{
+                        mAdapter.updateList(arrayListMovieList);
+                    }
+
                     System.out.println("done");
+                    isLoading = false;
                 }catch (JSONException e){
                     System.out.println("ex "+e);
+                }finally {
+                    if(progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+
+                if(progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
 
             }
         }, "");

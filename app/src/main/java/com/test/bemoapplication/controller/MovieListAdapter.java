@@ -1,6 +1,7 @@
 package com.test.bemoapplication.controller;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.squareup.picasso.Picasso;
 import com.test.bemoapplication.R;
 import com.test.bemoapplication.model.movielist.MovieResult;
+import com.test.bemoapplication.utils.APIHandler;
+import com.test.bemoapplication.view.MovieDetailsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,22 +47,18 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MyVi
         //holder.textViewStoreName.setText(arrayListSurvey.get(position).getName());
 
 
-        holder.textViewTitle.setText("Survey No. "+arrayListMovieList.get(position).getTitle());
-        holder.textViewOverView.setText("Taluka:- "+arrayListMovieList.get(position).getOverview());
+        holder.textViewTitle.setText(arrayListMovieList.get(position).getTitle());
+        holder.textViewOverView.setText(arrayListMovieList.get(position).getOverview());
         Picasso.with(activity)
-                .load("https://image.tmdb.org/t/p/w500/"+arrayListMovieList.get(position).getBackdropPath())
+                .load(APIHandler.restAPI.imageUrl+arrayListMovieList.get(position).getBackdropPath()).placeholder(R.drawable.im_place_holder)
                 .into(holder.imageViewDelete);
+
         holder.imageViewDelete.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-
-            }
-        });
-
-        holder.linearLayoutSurveyDetails.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
+            public void onClick(View v) {
+                Intent intent = new Intent(activity, MovieDetailsActivity.class);
+                intent.putExtra("movieID", arrayListMovieList.get(position).getId());
+                activity.startActivity(intent);
             }
         });
     }
@@ -71,8 +70,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MyVi
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        LinearLayout linearLayoutSurveyDetails;
-        TextView textViewTitle, textViewOverView, textViewVillage;
+        TextView textViewTitle, textViewOverView;
         ImageView imageViewDelete;
 
         public MyViewHolder(View itemView) {
@@ -82,10 +80,12 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MyVi
             textViewOverView = (TextView) itemView.findViewById(R.id.text_overview);
             imageViewDelete = (ImageView) itemView.findViewById(R.id.image_movie_banner);
 
-
         }
     }
 
-
+    public void updateList(List<MovieResult> movieList) {
+        arrayListMovieList = movieList;
+        notifyDataSetChanged();
+    }
 
 }

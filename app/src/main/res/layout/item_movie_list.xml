@@ -6,7 +6,9 @@
     <ImageView
         android:id="@+id/image_movie_banner"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
         />
 
     <LinearLayout
@@ -14,7 +16,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="bottom"
-        android:padding="20dp"
+        android:padding="10dp"
         android:background="@drawable/gradient_black_transparent">
         <TextView
             android:id="@+id/text_title"
@@ -23,6 +25,7 @@
             android:textColor="@color/white"
             android:text="dsadsadasdas"
             android:lines="1"
+            android:textSize="14sp"
             android:textStyle="bold"/>
         <TextView
             android:id="@+id/text_overview"
@@ -31,6 +34,7 @@
             android:lines="1"
             android:textColor="@color/white"
             android:layout_marginTop="5dp"
+            android:textSize="12sp"
             android:text="sdasdasdas"/>
     </LinearLayout>
 </FrameLayout>

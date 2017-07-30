@@ -164,14 +164,17 @@ public class APIHandler {
 
 
     public static class restAPI {
-        //public static String globalURL = "http://192.168.43.113/";
-        public static String globalURL = "http://www.landapp.in/adminpanel/api/";
+        private static String APIKey = "6906bb8eb453d3271e9304c440f9c1f8";
+        public static String globalURL = "https://api.themoviedb.org/3/";
+
+        public static String moviesList = globalURL + "movie/now_playing?api_key="+APIKey+"&language=en-US&page=";
+
+        public static String getMovieDetailsAPI(String movieID){
+            return globalURL + "movie/"+movieID+"?api_key="+APIKey+"&language=en-US";
+        }
 
 
-        public static String getForm114PDF = globalURL + "formRequest";
-        private static String smsGateWayAPI = "3ae69ded-6556-11e7-94da-0200cd936042";
-        public static String smsGateWayURL = "https://2factor.in/API/V1/" + smsGateWayAPI +"/SMS/";
-        //"https://2factor.in/API/V1/<api-key>/SMS/<mobile-number>/<code>
+        public static String imageUrl = "https://image.tmdb.org/t/p/w500/";
 
     }
 
