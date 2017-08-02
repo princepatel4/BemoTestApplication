@@ -25,7 +25,7 @@
             android:textColor="@color/white"
             android:text="dsadsadasdas"
             android:lines="1"
-            android:textSize="14sp"
+            android:textSize="@dimen/movie_title_text_size"
             android:textStyle="bold"/>
         <TextView
             android:id="@+id/text_overview"
@@ -34,7 +34,7 @@
             android:lines="1"
             android:textColor="@color/white"
             android:layout_marginTop="5dp"
-            android:textSize="12sp"
+            android:textSize="@dimen/movie_short_desc_text_size"
             android:text="sdasdasdas"/>
     </LinearLayout>
 </FrameLayout>

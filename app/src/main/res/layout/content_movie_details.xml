@@ -9,5 +9,9 @@
     tools:showIn="@layout/activity_movie_details">
 
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="adadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\nadadadsd\nasdada\n"/>
 
 </android.support.v4.widget.NestedScrollView>

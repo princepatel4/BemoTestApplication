@@ -23,7 +23,7 @@
             android:name=".view.MovieDetailsActivity"
             android:label="@string/title_activity_movie_details"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".view.ChatConversationActivity"></activity>
+        <activity android:name=".view.ChatConversationActivity" />
     </application>
 
 </manifest>
