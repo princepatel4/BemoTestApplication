@@ -6,19 +6,39 @@ package com.test.bemoapplication.model.chat;
 
 public class ChatConversation {
 
-    String key;
+    String messageKey;
+    String userKey;
+    String userName;
     String chatMessage;
     String deviceID;
     String timeStamp;
 
-
-
-    public String getKey() {
-        return key;
+    public ChatConversation(String messageKey, String userKey, String userName, String chatMessage, String deviceID, String timeStamp) {
+        this.messageKey = messageKey;
+        this.userKey = userKey;
+        this.userName = userName;
+        this.chatMessage = chatMessage;
+        this.deviceID = deviceID;
+        this.timeStamp = timeStamp;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public String getMessageKey() {
+        return messageKey;
+    }
+
+    public void setMessageKey(String messageKey) {
+        this.messageKey = messageKey;
+    }
+
+    public ChatConversation() {
+    }
+
+    public String getUserKey() {
+        return userKey;
+    }
+
+    public void setUserKey(String userKey) {
+        this.userKey = userKey;
     }
 
     public String getChatMessage() {
@@ -43,5 +63,27 @@ public class ChatConversation {
 
     public void setTimeStamp(String timeStamp) {
         this.timeStamp = timeStamp;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    @Override
+    public boolean  equals (Object object) {
+        boolean result = false;
+        if (object == null || object.getClass() != getClass()) {
+            result = false;
+        } else {
+            ChatConversation chat = (ChatConversation) object;
+            if (this.messageKey.equals(chat.getMessageKey())) {
+                result = true;
+            }
+        }
+        return result;
     }
 }

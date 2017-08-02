@@ -5,12 +5,21 @@ package com.test.bemoapplication.model.chat;
  */
 
 public class UserDetails {
-    String nickName;
-    String avatarURL;
 
-    public UserDetails(String nickName, String avatarURL) {
+    String nickName;
+    String fireBaseToken;
+
+    public UserDetails(String nickName, String fireBaseToken) {
         this.nickName = nickName;
-        this.avatarURL = avatarURL;
+        this.fireBaseToken = fireBaseToken;
+    }
+
+    public String getFireBaseToken() {
+        return fireBaseToken;
+    }
+
+    public void setFireBaseToken(String fireBaseToken) {
+        this.fireBaseToken = fireBaseToken;
     }
 
     public String getNickName() {
@@ -19,14 +28,6 @@ public class UserDetails {
 
     public void setNickName(String nickName) {
         this.nickName = nickName;
-    }
-
-    public String getAvatarURL() {
-        return avatarURL;
-    }
-
-    public void setAvatarURL(String avatarURL) {
-        this.avatarURL = avatarURL;
     }
 
 }

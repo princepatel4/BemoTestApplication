@@ -2,12 +2,11 @@ package com.test.bemoapplication.view;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
-import android.provider.SyncStateContract;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,18 +20,16 @@ import com.android.volley.VolleyError;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.picasso.Picasso;
 import com.test.bemoapplication.R;
-import com.test.bemoapplication.controller.MovieListAdapter;
 import com.test.bemoapplication.model.chat.UserDetails;
-import com.test.bemoapplication.model.movielist.MovieResult;
 import com.test.bemoapplication.utils.APIHandler;
+import com.test.bemoapplication.utils.AppPrefs;
 import com.test.bemoapplication.utils.Constants;
 import com.test.bemoapplication.utils.Utils;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -46,12 +43,17 @@ public class MovieDetailsActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
 
     DatabaseReference mFireBaseDatabase;
-    ArrayList<String> arrayListAvatarURL = new ArrayList<>();
+    AppPrefs appPrefs;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
-        mFireBaseDatabase = Utils.initiateFireBase(MovieDetailsActivity.this, Constants.fireBaseURL);
+        appPrefs = new AppPrefs(MovieDetailsActivity.this);
+        try {
+            mFireBaseDatabase = Utils.initiateFireBase(MovieDetailsActivity.this, "");
+        }catch (Exception e){
+            System.out.println("firebase exception "+e.getMessage());
+        }
         setUI();
         int a = getIntent().getIntExtra("movieID",0);
         if(a > 0){
@@ -74,7 +76,13 @@ public class MovieDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                showUserDetails();
+                if(appPrefs.getUserID().equalsIgnoreCase("")) {
+                    showUserDetails();
+                }else {
+                    Intent intent = new Intent(MovieDetailsActivity.this, ChatConversationActivity.class);
+                    startActivity(intent);
+                }
+
             }
         });
     }
@@ -83,12 +91,15 @@ public class MovieDetailsActivity extends AppCompatActivity {
     {
 
 
-        if(arrayListAvatarURL.size()<=0){
-            getAvatar();
-        }
 
         final Dialog dialog = new Dialog(MovieDetailsActivity.this);
         dialog.setContentView(R.layout.popup_user_details);
+
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        int width = metrics.widthPixels;
+        int height = metrics.heightPixels;
+        dialog.getWindow().setLayout((6 * width)/7, (4 * height)/5);
+
 
         // set the custom dialog components - text, image and button
         final EditText editTextNickName = (EditText) dialog.findViewById(R.id.edit_nick_name);
@@ -99,8 +110,16 @@ public class MovieDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String mGroupId = mFireBaseDatabase.push().getKey();
-                mFireBaseDatabase.child("users/" + mGroupId).setValue(new UserDetails(editTextNickName.getText().toString(), arrayListAvatarURL.get(Utils.getRandomPosition())));
+                String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+                mFireBaseDatabase.child("users/" + mGroupId).setValue(new UserDetails(editTextNickName.getText().toString(), refreshedToken));
                 Toast.makeText(MovieDetailsActivity.this, "Successfully registered.", Toast.LENGTH_SHORT).show();
+
+                appPrefs.setUserID(mGroupId);
+                appPrefs.setUserName(editTextNickName.getText().toString());
+
+                Intent intent = new Intent(MovieDetailsActivity.this, ChatConversationActivity.class);
+                startActivity(intent);
+
                 dialog.dismiss();
             }
         });
@@ -108,40 +127,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void getAvatar()
-    {
-        progressDialog = new ProgressDialog(MovieDetailsActivity.this);
-        progressDialog.setMessage("Please wait...");
-        progressDialog.setCancelable(false);
-        if(!progressDialog.isShowing()) {
-            progressDialog.show();
-        }
 
-        mFireBaseDatabase.child("avatar").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    arrayListAvatarURL.add(snapshot.getValue().toString());
-                }
-
-
-                if (progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
-
-
-                finish();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                if (progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
-            }
-        });
-    }
     private void getMovieDetails(String movieID){
 
         progressDialog = new ProgressDialog(MovieDetailsActivity.this);
