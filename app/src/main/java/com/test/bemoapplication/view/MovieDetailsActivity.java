@@ -1,27 +1,42 @@
 package com.test.bemoapplication.view;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.provider.SyncStateContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.test.bemoapplication.R;
 import com.test.bemoapplication.controller.MovieListAdapter;
+import com.test.bemoapplication.model.chat.UserDetails;
 import com.test.bemoapplication.model.movielist.MovieResult;
 import com.test.bemoapplication.utils.APIHandler;
+import com.test.bemoapplication.utils.Constants;
+import com.test.bemoapplication.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class MovieDetailsActivity extends AppCompatActivity {
 
@@ -30,11 +45,13 @@ public class MovieDetailsActivity extends AppCompatActivity {
     FloatingActionButton fabChat;
     ProgressDialog progressDialog;
 
+    DatabaseReference mFireBaseDatabase;
+    ArrayList<String> arrayListAvatarURL = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
-
+        mFireBaseDatabase = Utils.initiateFireBase(MovieDetailsActivity.this, Constants.fireBaseURL);
         setUI();
         int a = getIntent().getIntExtra("movieID",0);
         if(a > 0){
@@ -56,12 +73,75 @@ public class MovieDetailsActivity extends AppCompatActivity {
         fabChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+
+                showUserDetails();
             }
         });
     }
 
+    private void showUserDetails()
+    {
+
+
+        if(arrayListAvatarURL.size()<=0){
+            getAvatar();
+        }
+
+        final Dialog dialog = new Dialog(MovieDetailsActivity.this);
+        dialog.setContentView(R.layout.popup_user_details);
+
+        // set the custom dialog components - text, image and button
+        final EditText editTextNickName = (EditText) dialog.findViewById(R.id.edit_nick_name);
+
+        Button dialogSubmit = (Button) dialog.findViewById(R.id.button_submit);
+        // if button is clicked, close the custom dialog
+        dialogSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String mGroupId = mFireBaseDatabase.push().getKey();
+                mFireBaseDatabase.child("users/" + mGroupId).setValue(new UserDetails(editTextNickName.getText().toString(), arrayListAvatarURL.get(Utils.getRandomPosition())));
+                Toast.makeText(MovieDetailsActivity.this, "Successfully registered.", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void getAvatar()
+    {
+        progressDialog = new ProgressDialog(MovieDetailsActivity.this);
+        progressDialog.setMessage("Please wait...");
+        progressDialog.setCancelable(false);
+        if(!progressDialog.isShowing()) {
+            progressDialog.show();
+        }
+
+        mFireBaseDatabase.child("avatar").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    arrayListAvatarURL.add(snapshot.getValue().toString());
+                }
+
+
+                if (progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+
+
+                finish();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                if (progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+            }
+        });
+    }
     private void getMovieDetails(String movieID){
 
         progressDialog = new ProgressDialog(MovieDetailsActivity.this);
