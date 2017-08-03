@@ -80,7 +80,6 @@
                         android:id="@+id/text_movie_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="sdaadasdasdsa"
                         android:padding="@dimen/normal_padding_margin"
                         android:textSize="@dimen/movie_title_text_size"
                         android:textColor="@color/colorPrimaryDark"/>
@@ -91,8 +90,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/normal_padding_margin"
                         android:textColor="@color/colorAccent"
-                        android:padding="@dimen/normal_padding_margin"
-                        android:text="asdsadas"/>
+                        android:padding="@dimen/normal_padding_margin"/>
 
                 </LinearLayout>
             </LinearLayout>

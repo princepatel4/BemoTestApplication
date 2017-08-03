@@ -23,7 +23,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:text="dsadsadasdas"
             android:lines="1"
             android:textSize="@dimen/movie_title_text_size"
             android:textStyle="bold"/>
@@ -34,7 +33,6 @@
             android:lines="1"
             android:textColor="@color/white"
             android:layout_marginTop="5dp"
-            android:textSize="@dimen/movie_short_desc_text_size"
-            android:text="sdasdasdas"/>
+            android:textSize="@dimen/movie_short_desc_text_size"/>
     </LinearLayout>
 </FrameLayout>
