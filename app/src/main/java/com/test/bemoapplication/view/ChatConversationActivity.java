@@ -119,7 +119,14 @@ public class ChatConversationActivity extends AppCompatActivity {
                     editTextMessage.setText("");
 
                     listChatConversation.add(chatConversation);
-                    adapter.updateList(listChatConversation);
+                    if(adapter == null){
+                        adapter = new ChatConversationAdapter(ChatConversationActivity.this, listChatConversation);
+                        recyclerViewMessage.setAdapter(adapter);
+                        recyclerViewMessage.smoothScrollToPosition(recyclerViewMessage.getAdapter().getItemCount());
+                    }else{
+                        adapter.updateList(listChatConversation);
+                    }
+
                     lastDiscussionKey = mGroupId;
                     recyclerViewMessage.smoothScrollToPosition(recyclerViewMessage.getAdapter().getItemCount());
 
