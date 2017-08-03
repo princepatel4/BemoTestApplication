@@ -1,26 +1,37 @@
 package com.test.bemoapplication.view;
 
+import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 import com.test.bemoapplication.R;
 import com.test.bemoapplication.controller.ChatConversationAdapter;
 import com.test.bemoapplication.model.chat.ChatConversation;
 import com.test.bemoapplication.model.chat.UserDetails;
+import com.test.bemoapplication.utils.APIHandler;
 import com.test.bemoapplication.utils.AppPrefs;
 import com.test.bemoapplication.utils.Utils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +51,9 @@ public class ChatConversationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_conversation);
 
+        getSupportActionBar().setTitle(getString(R.string.activity_chat_conversation));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         appPrefs = new AppPrefs(ChatConversationActivity.this);
         try {
             mFireBaseDatabase = Utils.initiateFireBase(ChatConversationActivity.this, "");
@@ -50,7 +64,40 @@ public class ChatConversationActivity extends AppCompatActivity {
         setUI();
         getUpdatedChat();
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_movie_details, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+
+        //noinspection SimplifiableIfStatement
+
+
+
+
+        if(id == android.R.id.home)
+        {
+            finish();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
     private void setUI(){
         editTextMessage = (EditText) findViewById(R.id.messageEditText);
         imageButtonSendMessage = (ImageButton) findViewById(R.id.sendMessageButton);
@@ -67,7 +114,8 @@ public class ChatConversationActivity extends AppCompatActivity {
 
                     ChatConversation chatConversation = new ChatConversation(mGroupId, appPrefs.getUserID(), appPrefs.getUserName(), editTextMessage.getText().toString(), "", "");
                     mFireBaseDatabase.child("discussion/" + mGroupId).setValue(chatConversation);
-                    Toast.makeText(ChatConversationActivity.this, "Successfully sent message.", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(ChatConversationActivity.this, "Successfully sent message.", Toast.LENGTH_SHORT).show();
+                    broadcastMessage(editTextMessage.getText().toString());
                     editTextMessage.setText("");
 
                     listChatConversation.add(chatConversation);
@@ -111,6 +159,7 @@ public class ChatConversationActivity extends AppCompatActivity {
                     if(adapter == null){
                         adapter = new ChatConversationAdapter(ChatConversationActivity.this, listChatConversation);
                         recyclerViewMessage.setAdapter(adapter);
+                        recyclerViewMessage.smoothScrollToPosition(recyclerViewMessage.getAdapter().getItemCount());
                     }else{
                         adapter.updateList(listChatConversation);
                     }
@@ -156,6 +205,33 @@ public class ChatConversationActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void broadcastMessage(String message){
+
+
+        try {
+
+            final JSONObject jObject = new JSONObject();
+            jObject.put("message", message);
+            jObject.put("nickName", appPrefs.getUserName());
+            System.out.println("request Json "+ jObject);
+            APIHandler.getsharedInstance(ChatConversationActivity.this).execute(Request.Method.POST, APIHandler.restAPI.sendMessage, jObject, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+
+
+                }
+            }, "");
+        }catch (JSONException e){
+
+        }
     }
 
 }

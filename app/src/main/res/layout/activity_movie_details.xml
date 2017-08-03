@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,33 +7,24 @@
     android:fitsSystemWindows="true"
     tools:context="com.test.bemoapplication.view.MovieDetailsActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/app_bar"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/app_bar_height"
-        android:fitsSystemWindows="true"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/collapsingToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
-            app:expandedTitleMarginStart="48dp"
-            app:expandedTitleMarginEnd="64dp"
-            app:title="Collapse">
+        android:layout_height="match_parent">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
         <FrameLayout
+            android:id="@+id/framelayout_header"
             android:orientation="vertical" android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="@dimen/app_bar_height">
 
             <ImageView
                 android:id="@+id/image_movie_banner"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/app_bar_height"
                 android:scaleType="centerCrop"
-                />
+                android:src="@drawable/im_place_holder"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -61,19 +52,70 @@
                     android:textSize="@dimen/movie_short_desc_text_size"
                     android:text="sdasdasdas"/>
             </LinearLayout>
+
         </FrameLayout>
-        </android.support.design.widget.CollapsingToolbarLayout>
-    </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_movie_details" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" android:orientation="vertical">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:orientation="horizontal"
+                android:padding="@dimen/movie_details_movie_details">
+
+                <ImageView
+                    android:id="@+id/image_movie_poster"
+                    android:layout_width="100dp"
+                    android:layout_height="150dp"
+                    android:scaleType="centerCrop"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/normal_padding_margin"
+                    android:layout_marginRight="@dimen/normal_padding_margin"
+                    android:gravity="center_vertical" android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/text_movie_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="sdaadasdasdsa"
+                        android:padding="@dimen/normal_padding_margin"
+                        android:textSize="@dimen/movie_title_text_size"
+                        android:textColor="@color/colorPrimaryDark"/>
+
+                    <TextView
+                        android:id="@+id/text_total_rating"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/normal_padding_margin"
+                        android:textColor="@color/colorAccent"
+                        android:padding="@dimen/normal_padding_margin"
+                        android:text="asdsadas"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/text_movie_overview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="@dimen/movie_details_movie_details"
+                android:paddingLeft="@dimen/movie_details_movie_details"
+                android:textSize="@dimen/movie_short_desc_text_size"
+                android:layout_marginTop="@dimen/normal_padding_margin"
+                android:layout_marginBottom="@dimen/normal_padding_margin"
+                />
+
+        </LinearLayout>
+</LinearLayout>
+    </ScrollView>
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_chat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
-        app:layout_anchor="@id/app_bar"
-        app:layout_anchorGravity="bottom|end"
+        android:layout_gravity="bottom|right"
         app:srcCompat="@android:drawable/ic_dialog_email" />
-
-</android.support.design.widget.CoordinatorLayout>
+</FrameLayout>

@@ -6,6 +6,7 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="normal_padding_margin">10dp</dimen>
+    <dimen name="movie_details_movie_details">20dp</dimen>
     <dimen name="movie_title_text_size">16sp</dimen>
     <dimen name="movie_short_desc_text_size">14sp</dimen>
 </resources>

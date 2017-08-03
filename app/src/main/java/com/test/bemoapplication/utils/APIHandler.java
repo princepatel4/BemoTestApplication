@@ -112,7 +112,7 @@ public class APIHandler {
                                 Toast.makeText(mContext, "" + message, Toast.LENGTH_SHORT).show();
                             } else if (error instanceof AuthFailureError) {
                                 Log.e("Volley", "AuthFailureError");
-                                message = "Server error.";
+                                message = "AuthFailureError.";
                             } else if (error instanceof ServerError) {
                                 try {
                                     message = "Server error.";
@@ -131,11 +131,11 @@ public class APIHandler {
                                 message = "Network error.";
                                 Log.e("Volley", "NetworkError");
                             } else if (error instanceof ParseError) {
-                                message = "Server error.";
+                                message = "ParseError.";
                                 Log.e("Volley", "ParseError");
                             }
 
-                            Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
+                            //Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -166,7 +166,7 @@ public class APIHandler {
     public static class restAPI {
         private static String APIKey = "6906bb8eb453d3271e9304c440f9c1f8";
         public static String globalURL = "https://api.themoviedb.org/3/";
-
+        public static String sendMessage = "https://us-central1-bemotestapp.cloudfunctions.net/sendNotification";
         public static String moviesList = globalURL + "movie/now_playing?api_key="+APIKey+"&language=en-US&page=";
 
         public static String getMovieDetailsAPI(String movieID){
